@@ -1,5 +1,9 @@
 import type { Request, Response } from "express";
-import { getQuests, getQuestById } from "../services/questsServices.ts";
+import {
+  getQuests,
+  getQuestById,
+  getQuestsByCitySlug,
+} from "../services/questsServices.ts";
 
 export const getAllQuests = async (_req: Request, res: Response) => {
   try {
@@ -25,5 +29,17 @@ export const getQuest = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Could not get quest" });
+  }
+};
+
+export const getQuestsForCity = async (req: Request, res: Response) => {
+  const { slug } = req.params;
+
+  if (!slug) return res.status(404).json({ message: "Quest was not found" });
+  try {
+    const quests = await getQuestsByCitySlug(slug);
+    res.json(quests);
+  } catch (err) {
+    res.status(500).json({ message: "Could not get quests" });
   }
 };

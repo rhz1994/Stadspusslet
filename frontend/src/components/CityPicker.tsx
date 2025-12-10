@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { City, Coordinates } from "../types/types";
+import { City, Coordinates, CityPickerProps } from "../types/types";
 import Button from "@mui/material/Button";
 
 import Dialog from "@mui/material/Dialog";
@@ -15,8 +15,12 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
+import Box from "@mui/material/Box";
 
-function CityPicker() {
+function CityPicker({ onSelectCity }: CityPickerProps) {
   const [cities, setCities] = useState<City[]>([]);
   const [selectedCity, setSelectedCity] = useState("");
   const storedConsent = localStorage.getItem("locationConsent");
@@ -25,6 +29,7 @@ function CityPicker() {
   const [coords, setCoords] = useState<Coordinates | null>(null);
   const [loading, setLoading] = useState(false);
   const [nearestCity, setNearestCity] = useState<City | null>(null);
+  const [showCities, setShowCities] = useState(false);
 
   useEffect(() => {
     fetch("http://localhost:3000/cities")
@@ -40,8 +45,8 @@ function CityPicker() {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setCoords({
-          lat: position.coords.latitude,
-          lon: position.coords.longitude,
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
         });
         setLoading(false);
         console.log(position.coords.latitude, position.coords.longitude);
@@ -70,7 +75,7 @@ function CityPicker() {
     if (hasConsent && !coords) {
       requestGeolocation();
     }
-  }, [hasConsent, coords]);
+  }, [hasConsent]);
 
   const resetConsent = () => {
     localStorage.removeItem("locationConsent");
@@ -79,14 +84,17 @@ function CityPicker() {
     setOpen(true);
   };
 
-  // Haversine-formel
+  // Haversine-formel. Hämtad från https://dev.to/ayushman/measure-distance-between-two-locations-in-javascript-using-the-haversine-formula-7dc
 
   function degToRad(deg: number): number {
     const rad = (deg * Math.PI) / 180;
     return rad;
   }
 
-  function calculateDistance(startCoords, destCoords) {
+  function calculateDistance(
+    startCoords: Coordinates,
+    destCoords: Coordinates
+  ): number {
     const startingLat = degToRad(startCoords.latitude);
     const startingLong = degToRad(startCoords.longitude);
     const destinationLat = degToRad(destCoords.latitude);
@@ -106,22 +114,39 @@ function CityPicker() {
   }
 
   useEffect(() => {
-    if (!coords) return;
+    if (!coords || cities.length === 0) return;
 
     let minDistance = Infinity;
+    let closest: City | null = null;
 
     cities.forEach((city) => {
       const distance = calculateDistance(
-        { latitude: coords?.lat, longitude: coords?.lon },
+        { latitude: coords.latitude, longitude: coords.longitude },
         { latitude: city.latitude, longitude: city.longitude }
       );
 
       if (distance < minDistance) {
         minDistance = distance;
-        setNearestCity(city);
+        closest = city;
       }
     });
-  }, [coords]);
+
+    setNearestCity(closest);
+  }, [coords, cities]);
+
+  const sortedCities = coords
+    ? [...cities].sort((a, b) => {
+        const distanceA = calculateDistance(
+          { latitude: coords.latitude, longitude: coords.longitude },
+          { latitude: a.latitude, longitude: a.longitude }
+        );
+        const distanceB = calculateDistance(
+          { latitude: coords.latitude, longitude: coords.longitude },
+          { latitude: b.latitude, longitude: b.longitude }
+        );
+        return distanceA - distanceB;
+      })
+    : cities;
 
   console.log(nearestCity);
   return (
@@ -158,26 +183,78 @@ function CityPicker() {
             </>
           ) : coords ? (
             <p>
-              Din position: {coords.lat.toFixed(4)}, {coords.lon.toFixed(4)}
+              Din position: {coords.latitude.toFixed(4)},
+              {coords.longitude.toFixed(4)}
             </p>
           ) : null}
           <p>Välj stad</p>
-          <List>
-            {cities.map((city) => (
-              <ListItem disablePadding key={city.id}>
-                <ListItemButton
-                  selected={selectedCity === city.id.toString()}
-                  onClick={() => setSelectedCity(city.id.toString())}
-                >
-                  <ListItemAvatar>
-                    <Avatar src={`/${city.icon}`} />
-                  </ListItemAvatar>
-                  <ListItemText primary={city.name} /> {city.latitude}
-                  {city.longitude}
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
+          {nearestCity && (
+            <Card
+              sx={{
+                mb: 3,
+                maxWidth: 400,
+                margin: "auto",
+                borderRadius: 3,
+                boxShadow: 3,
+                textAlign: "center",
+                backgroundColor: "#f0f8ff",
+              }}
+            >
+              <CardMedia
+                component="img"
+                height="200"
+                image={`/${nearestCity.icon}`}
+                alt={nearestCity.name}
+                sx={{ objectFit: "cover" }}
+              />
+              <CardContent>
+                <Typography variant="h5" sx={{ fontWeight: "bold", mb: 1 }}>
+                  Närmaste stad
+                </Typography>
+                <Typography variant="h6" sx={{ mb: 2 }}>
+                  {nearestCity.name}
+                </Typography>
+                <Box>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => {
+                      if (nearestCity?.slug) onSelectCity(nearestCity.slug);
+                    }}
+                  >
+                    Välj stad
+                  </Button>
+                </Box>
+              </CardContent>
+            </Card>
+          )}
+
+          <Button onClick={() => setShowCities(true)}>
+            Visa övriga städer
+          </Button>
+          {showCities && (
+            <List>
+              {sortedCities
+                .filter((city) => nearestCity?.id !== city.id)
+                .map((city) => (
+                  <ListItem disablePadding key={city.id}>
+                    <ListItemButton
+                      selected={selectedCity === city.slug}
+                      onClick={() => {
+                        setSelectedCity(city.slug);
+                        onSelectCity(city.slug);
+                      }}
+                    >
+                      <ListItemAvatar>
+                        <Avatar src={`/${city.icon}`} />
+                      </ListItemAvatar>
+                      <ListItemText primary={city.name} /> {city.latitude}
+                      {city.longitude}
+                    </ListItemButton>
+                  </ListItem>
+                ))}
+            </List>
+          )}
         </div>
       ) : (
         <p>

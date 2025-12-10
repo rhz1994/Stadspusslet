@@ -16,3 +16,11 @@ export const getCityById = async (id: number): Promise<City | null> => {
   );
   return rows.length > 0 ? (rows[0] as City) : null;
 };
+
+export const getCityBySlug = async (slug: string): Promise<City | null> => {
+  const [rows] = await database.query<RowDataPacket[] & City[]>(
+    "SELECT * FROM cities WHERE slug = ?",
+    [slug]
+  );
+  return rows.length > 0 ? (rows[0] as City) : null;
+};

@@ -1,9 +1,14 @@
 import { Router } from "express";
-import { getAllCities, getCity } from "../controllers/citiesController.ts";
+import {
+  getAllCitiesController,
+  getCityController,
+  getCityBySlugController,
+} from "../controllers/citiesController.ts";
 
 const router = Router();
 
-router.get("/", getAllCities);
-router.get("/:id", getCity);
+router.get("/", getAllCitiesController);
+router.get("/id/:id", getCityController);
+router.get("/slug/:slug", getCityBySlugController);
 
 export default router;

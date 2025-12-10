@@ -3,12 +3,38 @@ export interface City {
   name: string;
   description: string;
   icon: string;
-  latitude: string;
-  longitude: string;
-  setCity?: (city: string) => void;
+  latitude: number;
+  longitude: number;
+  slug: string;
 }
 
 export type Coordinates = {
-  lat: number;
-  lon: number;
+  latitude: number;
+  longitude: number;
 };
+
+export interface CityPickerProps {
+  onSelectCity: (slug: string) => void;
+}
+
+export interface Quest {
+  id: number;
+  name: string;
+  description: string;
+  cityId: number;
+}
+
+export interface Puzzle {
+  id: number;
+  questId: number;
+  locationId: number;
+  puzzleText: string;
+  correctAnswer: string;
+  orderNumber: number;
+  clueText: string | null;
+  correctClueLocation: number;
+  puzzleType?: string;
+}
+export interface PuzzleCardProps {
+  quest: Quest;
+}
