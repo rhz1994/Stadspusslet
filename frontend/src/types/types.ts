@@ -3,6 +3,8 @@ export interface City {
   name: string;
   description: string;
   icon: string;
+  latitude: string;
+  longitude: string;
   setCity?: (city: string) => void;
 }
 

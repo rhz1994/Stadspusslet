@@ -22,7 +22,7 @@ describe("<CityPicker />", () => {
 
     cy.get("p").should(
       "contain.text",
-      "Ge tillgång till platåtkomst för att använda webbplatsen"
+      "Vi använder din plats för att visa quests nära dig. Vill du ge tillgång?"
     );
 
     cy.get("button").contains("Godkänn").click();

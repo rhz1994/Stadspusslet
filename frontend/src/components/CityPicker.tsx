@@ -24,6 +24,7 @@ function CityPicker() {
   const [open, setOpen] = useState(storedConsent === null);
   const [coords, setCoords] = useState<Coordinates | null>(null);
   const [loading, setLoading] = useState(false);
+  const [nearestCity, setNearestCity] = useState<City | null>(null);
 
   useEffect(() => {
     fetch("http://localhost:3000/cities")
@@ -78,6 +79,51 @@ function CityPicker() {
     setOpen(true);
   };
 
+  // Haversine-formel
+
+  function degToRad(deg: number): number {
+    const rad = (deg * Math.PI) / 180;
+    return rad;
+  }
+
+  function calculateDistance(startCoords, destCoords) {
+    const startingLat = degToRad(startCoords.latitude);
+    const startingLong = degToRad(startCoords.longitude);
+    const destinationLat = degToRad(destCoords.latitude);
+    const destinationLong = degToRad(destCoords.longitude);
+
+    const radius = 6371;
+
+    const distance =
+      Math.acos(
+        Math.sin(startingLat) * Math.sin(destinationLat) +
+          Math.cos(startingLat) *
+            Math.cos(destinationLat) *
+            Math.cos(startingLong - destinationLong)
+      ) * radius;
+
+    return distance;
+  }
+
+  useEffect(() => {
+    if (!coords) return;
+
+    let minDistance = Infinity;
+
+    cities.forEach((city) => {
+      const distance = calculateDistance(
+        { latitude: coords?.lat, longitude: coords?.lon },
+        { latitude: city.latitude, longitude: city.longitude }
+      );
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        setNearestCity(city);
+      }
+    });
+  }, [coords]);
+
+  console.log(nearestCity);
   return (
     <>
       <Button onClick={resetConsent}>Nollställ plats tillstånd</Button>
@@ -126,7 +172,8 @@ function CityPicker() {
                   <ListItemAvatar>
                     <Avatar src={`/${city.icon}`} />
                   </ListItemAvatar>
-                  <ListItemText primary={city.name} />
+                  <ListItemText primary={city.name} /> {city.latitude}
+                  {city.longitude}
                 </ListItemButton>
               </ListItem>
             ))}
