@@ -14,7 +14,8 @@ CREATE TABLE cities (
     name VARCHAR(100) NOT NULL,
     description TEXT,
     latitude DECIMAL(10, 7) NOT NULL,
-    longitude DECIMAL(10, 7) NOT NULL
+    longitude DECIMAL(10, 7) NOT NULL,
+    icon VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE locations (
@@ -64,10 +65,11 @@ CREATE TABLE puzzles (
 --     FOREIGN KEY (puzzle_id) REFERENCES puzzles(id) ON DELETE CASCADE
 -- );
 
-INSERT INTO cities (name, description, latitude, longitude) VALUES
-('Göteborg', 'En historisk stad vid västkusten i Sverige', 57.7089, 11.9746),
-('Prag', 'Böhmens gamla huvudstad vars mysterier väntar på att upptäckas', 50.0755, 14.4378),
-('Rom', 'Den eviga staden erbjuder gåtor och historia i överflöd', 41.9028, 12.4964);
+INSERT INTO cities (name, description, latitude, longitude, icon) VALUES
+('Göteborg', 'En historisk stad vid västkusten i Sverige', 57.7089, 11.9746, 'gothenburg.png'),
+('Prag', 'Böhmens gamla huvudstad vars mysterier väntar på att upptäckas', 50.0755, 14.4378, 'prague.png'),
+('Rom', 'Den eviga staden erbjuder gåtor och historia i överflöd', 41.9028, 12.4964, 'rome.png');
+
 
 INSERT INTO locations (name, description, city_id, latitude, longitude) VALUES
 ('Feskekôrka', 'Känd fiskmarknad och byggnad', 1, 57.7078, 11.9661),

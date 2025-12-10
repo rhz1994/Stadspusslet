@@ -22,10 +22,10 @@ describe("<CityPicker />", () => {
 
     cy.get("p").should(
       "contain.text",
-      "Meddela tillgång till platåtkomst för att använda webbplatsen"
+      "Ge tillgång till platåtkomst för att använda webbplatsen"
     );
 
-    cy.get("button").contains("Yes").click();
+    cy.get("button").contains("Godkänn").click();
 
     cy.wait("@getCities");
 
