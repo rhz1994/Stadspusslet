@@ -1,4 +1,3 @@
-/* eslint-disable */
 const { defineConfig } = require("cypress");
 const createBundler = require("@bahmutov/cypress-esbuild-preprocessor");
 const {
@@ -10,8 +9,9 @@ const {
 
 module.exports = defineConfig({
   e2e: {
+    baseUrl: "http://127.0.0.1:5173",
     specPattern: [
-      "cypress/e2e/**/*.cy.{js,jsx,ts,tsx}",
+      "cypress/e2e/**/*.cy.{js,ts,jsx,tsx}",
       "cypress/e2e/**/*.feature",
     ],
 
@@ -33,6 +33,11 @@ module.exports = defineConfig({
     devServer: {
       framework: "react",
       bundler: "vite",
+    },
+
+    async setupNodeEvents(on, config) {
+      require("@cypress/code-coverage/task")(on, config);
+      return config;
     },
   },
 });

@@ -1,80 +1,90 @@
+const citiesMock = [
+  {
+    id: 1,
+    name: "Göteborg",
+    latitude: 57.7089,
+    longitude: 11.9746,
+    icon: "gothenburg.png",
+    slug: "gothenburg",
+  },
+  {
+    id: 2,
+    name: "Rom",
+    latitude: 41.9028,
+    longitude: 12.4964,
+    icon: "rome.png",
+    slug: "rome",
+  },
+];
+
+const cityDetailsMock = {
+  id: 1,
+  name: "Göteborg",
+  latitude: 57.7089,
+  longitude: 11.9746,
+  icon: "gothenburg.png",
+  slug: "gothenburg",
+};
+
+const questsMock = [
+  {
+    id: 1,
+    name: "Göteborgs Äventyr",
+    description: "Utforska Göteborg genom 4 historiska platser",
+    cityId: 1,
+  },
+];
+
+const questByIdMock = {
+  id: 1,
+  name: "Göteborgs Äventyr",
+  description: "Utforska Göteborg genom 4 historiska platser",
+  cityId: 1,
+};
+
+const puzzlesMock = [
+  {
+    id: 1,
+    questId: 1,
+    locationId: 1,
+    puzzleText: "Vad heter arkitekten som ritade Fiskekyrkan?",
+    clueText: "Börja där fisken en gång kom in till staden",
+    orderNumber: 1,
+    locationLat: 57.7089,
+    locationLon: 11.9746,
+    cityLat: 57.7089,
+    cityLon: 11.9746,
+  },
+  {
+    id: 2,
+    questId: 1,
+    locationId: 2,
+    puzzleText: "Andra pusslet",
+    clueText: "Nästa ledtråd",
+    orderNumber: 2,
+    locationLat: 57.709,
+    locationLon: 11.975,
+    cityLat: 57.7089,
+    cityLon: 11.9746,
+  },
+];
+
 describe("Stadspusslet happy userflow", () => {
   it("User can choose a city, start a quest, and see the first puzzle", () => {
     cy.intercept("GET", "http://localhost:3000/cities", {
-      body: [
-        {
-          id: 1,
-          name: "Göteborg",
-          latitude: 57.7089,
-          longitude: 11.9746,
-          icon: "gothenburg.png",
-          slug: "gothenburg",
-        },
-        {
-          id: 2,
-          name: "Rom",
-          latitude: 41.9028,
-          longitude: 12.4964,
-          icon: "rome.png",
-          slug: "rome",
-        },
-      ],
+      body: citiesMock,
     }).as("getCities");
-
     cy.intercept("GET", "http://localhost:3000/cities/slug/gothenburg", {
-      body: {
-        id: 1,
-        name: "Göteborg",
-        latitude: 57.7089,
-        longitude: 11.9746,
-        icon: "gothenburg.png",
-        slug: "gothenburg",
-      },
+      body: cityDetailsMock,
     }).as("getCityDetails");
-
     cy.intercept("GET", "http://localhost:3000/quests/city/gothenburg", {
-      body: [
-        {
-          id: 1,
-          name: "Göteborgs Äventyr",
-          description: "Utforska Göteborg genom 4 historiska platser",
-          city_id: 1,
-        },
-      ],
+      body: questsMock,
     }).as("getQuests");
-
     cy.intercept("GET", "http://localhost:3000/quests/id/1", {
-      body: {
-        id: 1,
-        name: "Göteborgs Äventyr",
-        description: "Utforska Göteborg genom 4 historiska platser",
-        city_id: 1,
-      },
+      body: questByIdMock,
     }).as("getQuestById");
-
     cy.intercept("GET", "http://localhost:3000/puzzles/quest/1", {
-      body: [
-        {
-          id: 1,
-          quest_id: 1,
-          location_id: 1,
-          puzzle_text: "Vad heter arkitekten som ritade Fiskekyrkan?",
-          correct_answer: "Victor Von Gegerfelt",
-          order_number: 1,
-          orderNumber: 1,
-          clue_text: "Börja där fisken en gång kom in till staden",
-          clueText: "Börja där fisken en gång kom in till staden",
-          puzzle_type: "text",
-          location_lat: 57.7089,
-          locationLat: 57.7089,
-          location_lon: 11.9746,
-          locationLon: 11.9746,
-          city_lat: 57.7089,
-          cityLat: 57.7089,
-          city_lon: 11.9746,
-          cityLon: 11.9746,
-        },
-      ],
+      body: puzzlesMock,
     }).as("getPuzzles");
 
     cy.visit("http://127.0.0.1:5173/#/", {
@@ -111,10 +121,9 @@ describe("Stadspusslet happy userflow", () => {
     cy.get('[data-testid="quest-list"]', { timeout: 10000 }).should("exist");
     cy.contains("button", "Starta quest").click();
     cy.wait("@getQuestById");
-
     cy.wait("@getPuzzles");
 
-    cy.get('[data-testid="clue-container"]', { timeout: 10000 }).should(
+    cy.get('[data-testid="clue-container"]').should(
       "contain.text",
       "Börja där fisken en gång kom in till staden"
     );
@@ -125,24 +134,7 @@ describe("Stadspusslet happy userflow", () => {
 describe("Handle cases when city is not available", () => {
   beforeEach(() => {
     cy.intercept("GET", "http://localhost:3000/cities", {
-      body: [
-        {
-          id: 1,
-          name: "Göteborg",
-          latitude: 57.7089,
-          longitude: 11.9746,
-          icon: "gothenburg.png",
-          slug: "gothenburg",
-        },
-        {
-          id: 2,
-          name: "Rom",
-          latitude: 41.9028,
-          longitude: 12.4964,
-          icon: "rome.png",
-          slug: "rome",
-        },
-      ],
+      body: citiesMock,
     }).as("getCities");
   });
 
@@ -159,12 +151,46 @@ describe("Handle cases when city is not available", () => {
     });
 
     cy.get('[data-testid="location-dialog"]').should("be.visible");
-
     cy.contains("button", "Neka").click();
-
     cy.contains("Platstjänster krävs").should("be.visible");
     cy.contains(
       "Du måste ge tillgång till platstjänster för att använda webbplatsen."
     ).should("be.visible");
+  });
+});
+
+describe("Puzzle game user interactions", () => {
+  beforeEach(() => {
+    cy.intercept("GET", "http://localhost:3000/puzzles/quest/1", {
+      body: puzzlesMock,
+    }).as("getPuzzles");
+    cy.visit("http://127.0.0.1:5173/#/quest/gothenburg/1");
+    cy.wait("@getPuzzles");
+  });
+
+  it("Shows and hides clue toggle button", () => {
+    cy.get('[data-testid="clue-container"] button').click();
+    cy.get('[data-testid="clue-container"]').should("not.exist");
+    cy.contains("Visa ledtråd").click();
+    cy.get('[data-testid="clue-container"]').should("be.visible");
+  });
+
+  it("Completes all puzzles and shows solved message", () => {
+    cy.get('[data-testid="clue-container"] button').click();
+    cy.get('[data-testid="map-container"]').click();
+    cy.get('[data-testid="puzzle-container"] input').type(
+      "Victor Von Gegerfelt"
+    );
+    cy.get('[data-testid="solve-puzzle-button"]').click();
+
+    cy.get('[data-testid="clue-container"] button').click();
+    cy.get('[data-testid="map-container"]').click();
+    cy.get('[data-testid="puzzle-container"] input').type("Svar2");
+    cy.get('[data-testid="solve-puzzle-button"]').click();
+
+    cy.get('[data-testid="puzzle-solved-message"]').should(
+      "contain.text",
+      "Grattis!"
+    );
   });
 });

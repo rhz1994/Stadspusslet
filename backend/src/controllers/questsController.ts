@@ -40,6 +40,6 @@ export const getQuestsForCity = async (req: Request, res: Response) => {
     const quests = await getQuestsByCitySlug(slug);
     res.json(quests);
   } catch (err) {
-    res.status(500).json({ message: "Could not get quests" });
+    res.status(500).json({ message: "Could not get quests", err });
   }
 };
