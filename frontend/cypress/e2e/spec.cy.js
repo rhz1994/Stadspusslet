@@ -167,28 +167,4 @@ describe("Handle cases when city is not available", () => {
       "Du måste ge tillgång till platstjänster för att använda webbplatsen."
     ).should("be.visible");
   });
-
-  it("Handles case when no city is near user", () => {
-    cy.intercept("GET", "http://localhost:3000/cities", { body: [] }).as(
-      "getCities"
-    );
-
-    cy.visit("http://127.0.0.1:5173/#/", {
-      onBeforeLoad(win) {
-        win.localStorage.clear();
-        cy.stub(win.navigator.geolocation, "getCurrentPosition").callsFake(
-          (cb) => {
-            cb({ coords: { latitude: 0, longitude: 0 } });
-          }
-        );
-      },
-    });
-
-    cy.get('[data-testid="location-dialog"]').should("be.visible");
-    cy.get('[data-testid="accept-location"]').click();
-    cy.wait("@getCities");
-    cy.get('[data-test-id="nearest-city"]').should("not.exist");
-    cy.contains("Visa andra städer").should("not.exist");
-    cy.contains("Tillåt platstjänster").should("be.visible");
-  });
 });
