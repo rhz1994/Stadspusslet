@@ -23,9 +23,6 @@ jobs:
         run: npm install
         working-directory: frontend
 
-      - name: Kill port 5173
-        run: npx kill-port 5173 || true
-
       - name: Start Vite dev server
         run: npm run dev &
         working-directory: frontend

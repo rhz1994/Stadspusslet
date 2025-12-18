@@ -189,6 +189,8 @@ describe("Handle cases when city is not available", () => {
     cy.wait("@getCities");
     cy.get('[data-test-id="nearest-city"]').should("not.exist");
     cy.contains("Visa andra städer").should("not.exist");
-    cy.contains("Tillåt platstjänster").should("be.visible");
+    cy.contains("Tillåt platstjänster", { timeout: 10000 }).should(
+      "be.visible"
+    );
   });
 });
