@@ -20,12 +20,10 @@ jobs:
           node-version: 18
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Start Vite dev server
         run: npm run dev &
-        env:
-          CI: true
 
       - name: Wait for server
         run: npx wait-on http://127.0.0.1:5173
