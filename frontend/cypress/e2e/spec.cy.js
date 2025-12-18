@@ -1,4 +1,4 @@
-describe("Stadspusslet E2E", () => {
+describe("Stadspusslet happy userflow", () => {
   it("User can choose a city, start a quest, and see the first puzzle", () => {
     cy.intercept("GET", "http://localhost:3000/cities", {
       body: [
