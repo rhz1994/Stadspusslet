@@ -21,15 +21,19 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+        working-directory: frontend
 
       - name: Start Vite dev server
         run: npm run dev &
+        working-directory: frontend
 
       - name: Wait for server
         run: npx wait-on http://127.0.0.1:5173
+        working-directory: frontend
 
       - name: Run Cypress tests
         uses: cypress-io/github-action@v6
         with:
           browser: chrome
           start: npm run dev
+          working-directory: frontend
