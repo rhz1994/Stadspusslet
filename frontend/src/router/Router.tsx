@@ -6,6 +6,7 @@ import Home from "../pages/Home";
 import City from "../pages/City";
 import Quests from "../pages/Quests";
 import QuestPage from "../pages/QuestPage";
+import UMLPage from "../pages/UMLPage";
 
 function Router() {
   const router = createHashRouter([
@@ -24,6 +25,7 @@ function Router() {
         { path: "/city/:citySlug", element: <City /> },
         { path: "/city/:citySlug/quests", element: <Quests /> },
         { path: "/quest/:citySlug/:questId", element: <QuestPage /> },
+        { path: "/uml/", element: <UMLPage /> },
       ],
     },
   ]);

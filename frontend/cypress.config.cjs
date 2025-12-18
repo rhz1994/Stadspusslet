@@ -1,17 +1,23 @@
 /* eslint-disable */
-
+const { defineConfig } = require("cypress");
 const createBundler = require("@bahmutov/cypress-esbuild-preprocessor");
-const {
-  addCucumberPreprocessorPlugin,
-} = require("@badeball/cypress-cucumber-preprocessor");
 const {
   createEsbuildPlugin,
 } = require("@badeball/cypress-cucumber-preprocessor/esbuild");
-const { defineConfig } = require("cypress");
+const {
+  addCucumberPreprocessorPlugin,
+} = require("@badeball/cypress-cucumber-preprocessor");
 
 module.exports = defineConfig({
   e2e: {
+    specPattern: [
+      "cypress/e2e/**/*.cy.{js,jsx,ts,tsx}",
+      "cypress/e2e/**/*.feature",
+    ],
+
     async setupNodeEvents(on, config) {
+      require("@cypress/code-coverage/task")(on, config);
+
       const bundler = createBundler({
         plugins: [createEsbuildPlugin(config)],
       });
@@ -21,12 +27,6 @@ module.exports = defineConfig({
 
       return config;
     },
-    specPattern: [
-      // E2E-filer Cypress letar efter som standard
-      "cypress/e2e/**/*.cy.{js,jsx,ts,tsx}",
-      // Tillägg för Cucumber
-      "cypress/e2e/**/*.feature",
-    ],
   },
 
   component: {

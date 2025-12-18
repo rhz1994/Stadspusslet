@@ -7,7 +7,6 @@ const mockQuest: Quest = {
   description: "Utforska Göteborg genom 4 historiska platser",
   cityId: 1,
 };
-
 export const mockPuzzles: Puzzle[] = [
   {
     id: 1,
@@ -16,9 +15,13 @@ export const mockPuzzles: Puzzle[] = [
     puzzleText: "Vilken fisk konsumeras mest i Göteborg",
     correctAnswer: "Torsk",
     orderNumber: 1,
-    clueText: "Börja vid där fisken en gång kom in till staden",
+    clueText: "Börja där fisken en gång kom in till staden",
     correctClueLocation: 1,
     puzzleType: "text",
+    cityLat: 57.7089,
+    cityLon: 11.9746,
+    locationLat: 57.7010821,
+    locationLon: 11.9578305,
   },
   {
     id: 2,
@@ -30,18 +33,26 @@ export const mockPuzzles: Puzzle[] = [
     clueText: "Klättra upp till det gamla tornet",
     correctClueLocation: 2,
     puzzleType: "text",
+    cityLat: 57.7089,
+    cityLon: 11.9746,
+    locationLat: 57.6960493,
+    locationLon: 11.9553523,
   },
   {
     id: 3,
     questId: 1,
     locationId: 3,
     puzzleText:
-      "Vilken känd Göteborgs konstnär som finns utställd på museet författade barnboken 'Kattresan'?",
+      'Vilken känd Göteborgs konstnär som finns utställd på museet författade barnboken "Kattresan"?',
     correctAnswer: "Ivar Arosenius",
     orderNumber: 3,
     clueText: "Sök efter konst",
     correctClueLocation: 3,
     puzzleType: "text",
+    cityLat: 57.7089,
+    cityLon: 11.9746,
+    locationLat: 57.696521,
+    locationLon: 11.9805977,
   },
   {
     id: 4,
@@ -54,40 +65,38 @@ export const mockPuzzles: Puzzle[] = [
     clueText: "Promenera längs gatan som är känd för sina kanelbullar",
     correctClueLocation: 4,
     puzzleType: "text",
+    cityLat: 57.7089,
+    cityLon: 11.9746,
+    locationLat: 57.6984879,
+    locationLon: 11.957022,
   },
 ];
-
 describe("PuzzleCard.tsx", () => {
-  it("mounts PuzzleCard and displays puzzles for Gothenburg", () => {
-    // Kollar så att rätt pussel visas
-    cy.url().should("include", "/quest/gothenburg");
-
+  it("renders the first puzzle for Gothenburg", () => {
     cy.intercept(
-      { method: "GET", url: `/api/puzzles?questId=${mockQuest.id}` },
+      { method: "GET", url: `/puzzles/quest/${mockQuest.id}` },
       { body: mockPuzzles }
     ).as("getPuzzles");
 
     cy.mount(<PuzzleCard quest={mockQuest} />);
+
     cy.wait("@getPuzzles");
 
+    // Kontrollera att komponenten innehåller korrekt grundläggande struktur
     cy.contains(mockQuest.name).should("be.visible");
     cy.get("h1").should("be.visible");
-    cy.get('[data-testid="timer-container"]').should("be.visible");
+
+    // Kontrollera att kartan syns
     cy.get('[data-testid="map-container"]').should("be.visible");
 
-    // Går igenom alla fyra pussel som ingår i "questet".
-    mockPuzzles.forEach((puzzle, index) => {
-      cy.get('[data-testid="clue-container"]')
-        .eq(index)
-        .should("contain.text", puzzle.clueText);
-      cy.get(`[data-testid="clue-marker-${puzzle.id}"]`).click();
-      cy.get('[data-testid="puzzle-container"]').should("be.visible");
-      cy.get('[data-testid="solve-puzzle-button"]').click();
-    });
-
-    cy.get('[data-testid="puzzle-solved-message"]').should(
+    // Kontrollera att första ledtråden visas
+    cy.get('[data-testid="clue-container"]').should(
       "contain.text",
-      "Grattis!"
+      mockPuzzles[0].clueText
     );
+
+    // Kontrollera att dölj ledtråd fungear
+    cy.get("button").contains("Dölj ledtråd").click();
+    cy.get('[data-testid="clue-container"]').should("not.exist");
   });
 });

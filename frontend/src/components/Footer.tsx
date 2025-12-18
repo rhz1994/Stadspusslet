@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import { Link } from "react-router-dom";
 
 function Footer() {
   return (
@@ -7,14 +8,15 @@ function Footer() {
       component="footer"
       sx={{
         py: 2,
-        mt: 4,
+        mt: 10,
         textAlign: "center",
-        backgroundColor: "#f5f5f5",
-        borderTop: "1px solid #ddd",
+        borderTop: "1px solid",
       }}
     >
       <Typography variant="body2" color="textSecondary">
-        &copy; 2025 Stadspusslet. Alla rättigheter förbehållna.
+        <Link to="/uml" style={{ textDecoration: "none" }}>
+          UML-diagram
+        </Link>
       </Typography>
     </Box>
   );

@@ -18,17 +18,19 @@ describe("<CityPicker />", () => {
       ],
     }).as("getCities");
 
-    cy.mount(<CityPicker />);
+    cy.mount(<CityPicker onSelectCity={() => {}} />);
 
     cy.get("p").should(
       "contain.text",
-      "  Vi använder din plats för att visa quests nära dig. Vill du ge tillgång?"
+      "Vi använder din plats för att visa pussel nära dig och ge dig en bättre upplevelse."
     );
 
     cy.get("button").contains("Godkänn").click();
 
     cy.wait("@getCities");
 
-    cy.get("li").first().should("contain.text", "Göteborg");
+    cy.get('[data-test-id="nearest-city"]')
+      .first()
+      .should("contain.text", "Göteborg");
   });
 });

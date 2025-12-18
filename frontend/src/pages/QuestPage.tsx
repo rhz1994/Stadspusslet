@@ -23,7 +23,6 @@ function QuestPage() {
 
   return (
     <div>
-      <h1>{quest.name}</h1>
       <PuzzleCard quest={quest} />
     </div>
   );

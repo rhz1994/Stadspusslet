@@ -1,24 +1,30 @@
 import { useState, useEffect } from "react";
 import { City, Coordinates, CityPickerProps } from "../types/types";
-import Button from "@mui/material/Button";
-
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
-import ListItemAvatar from "@mui/material/ListItemAvatar";
-import Avatar from "@mui/material/Avatar";
-import CircularProgress from "@mui/material/CircularProgress";
-import Typography from "@mui/material/Typography";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import Box from "@mui/material/Box";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  ListItemAvatar,
+  Avatar,
+  CircularProgress,
+  Typography,
+  Card,
+  CardContent,
+  CardMedia,
+  Box,
+  Container,
+  Chip,
+  Stack,
+} from "@mui/material";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import ExploreIcon from "@mui/icons-material/Explore";
 
 function CityPicker({ onSelectCity }: CityPickerProps) {
   const [cities, setCities] = useState<City[]>([]);
@@ -49,10 +55,9 @@ function CityPicker({ onSelectCity }: CityPickerProps) {
           longitude: position.coords.longitude,
         });
         setLoading(false);
-        console.log(position.coords.latitude, position.coords.longitude);
       },
-      (error) => {
-        console.error(error);
+      (err) => {
+        console.error(err);
         setLoading(false);
       }
     );
@@ -84,11 +89,11 @@ function CityPicker({ onSelectCity }: CityPickerProps) {
     setOpen(true);
   };
 
-  // Haversine-formel. Hämtad från https://dev.to/ayushman/measure-distance-between-two-locations-in-javascript-using-the-haversine-formula-7dc
+  // Funktion som hämtar avstånd mellan platser baserat på Haversine-formeln.
+  // Källa: https://dev.to/ayushman/measure-distance-between-two-locations-in-javascript-using-the-haversine-formula-7dc
 
   function degToRad(deg: number): number {
-    const rad = (deg * Math.PI) / 180;
-    return rad;
+    return (deg * Math.PI) / 180;
   }
 
   function calculateDistance(
@@ -99,7 +104,6 @@ function CityPicker({ onSelectCity }: CityPickerProps) {
     const startingLong = degToRad(startCoords.longitude);
     const destinationLat = degToRad(destCoords.latitude);
     const destinationLong = degToRad(destCoords.longitude);
-
     const radius = 6371;
 
     const distance =
@@ -148,120 +152,183 @@ function CityPicker({ onSelectCity }: CityPickerProps) {
       })
     : cities;
 
-  console.log(nearestCity);
   return (
-    <>
-      <Button onClick={resetConsent}>Nollställ plats tillstånd</Button>
-      <Dialog
-        open={open}
-        onClose={handleDenied}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {"Vi behöver din plats"}
+    <Container maxWidth="md" sx={{ py: 4 }} data-testid="city-picker">
+      <Dialog open={open} onClose={handleDenied} data-testid="location-dialog">
+        <DialogTitle sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <LocationOnIcon color="primary" />
+          Tillåt platstjänster
         </DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Vi använder din plats för att visa quests nära dig. Vill du ge
-            tillgång?
+          <DialogContentText data-testid="location-consent-text">
+            Vi använder din plats för att visa pussel nära dig och ge dig en
+            bättre upplevelse.
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleAllow}>Godkänn</Button>
-          <Button onClick={handleDenied} autoFocus>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={handleDenied} color="inherit">
             Neka
+          </Button>
+          <Button
+            data-testid="accept-location"
+            onClick={handleAllow}
+            variant="contained"
+          >
+            Godkänn
           </Button>
         </DialogActions>
       </Dialog>
       {hasConsent ? (
-        <div>
-          {loading ? (
-            <>
-              <CircularProgress />
-              <Typography>Hämtar plats...</Typography>
-            </>
-          ) : coords ? (
-            <p>
-              Din position: {coords.latitude.toFixed(4)},
-              {coords.longitude.toFixed(4)}
-            </p>
-          ) : null}
-          <p>Välj stad</p>
-          {nearestCity && (
-            <Card
-              sx={{
-                mb: 3,
-                maxWidth: 400,
-                margin: "auto",
-                borderRadius: 3,
-                boxShadow: 3,
-                textAlign: "center",
-                backgroundColor: "#f0f8ff",
-              }}
+        <Box>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            mb={4}
+          >
+            <Typography variant="h4" fontWeight="bold">
+              Välj stad
+            </Typography>
+            <Button
+              size="small"
+              onClick={resetConsent}
+              startIcon={<ExploreIcon />}
             >
+              Ändra plats
+            </Button>
+          </Stack>
+
+          {loading && (
+            <Box textAlign="center" py={6}>
+              <CircularProgress size={60} />
+              <Typography variant="h6" mt={2} color="text.secondary">
+                Hämtar din plats...
+              </Typography>
+            </Box>
+          )}
+
+          {nearestCity && (
+            <Card sx={{ mb: 4, borderRadius: 3, boxShadow: 3 }}>
               <CardMedia
                 component="img"
-                height="200"
+                height="240"
                 image={`/${nearestCity.icon}`}
                 alt={nearestCity.name}
                 sx={{ objectFit: "cover" }}
               />
-              <CardContent>
-                <Typography variant="h5" sx={{ fontWeight: "bold", mb: 1 }}>
-                  Närmaste stad
-                </Typography>
-                <Typography variant="h6" sx={{ mb: 2 }}>
-                  {nearestCity.name}
-                </Typography>
-                <Box>
+              <CardContent sx={{ p: 3 }}>
+                <Stack spacing={2}>
+                  <Box>
+                    <Chip
+                      label="Närmaste stad"
+                      color="success"
+                      size="small"
+                      sx={{ mb: 1 }}
+                    />
+                    <Typography
+                      data-test-id="nearest-city"
+                      variant="h4"
+                      fontWeight="bold"
+                    >
+                      {nearestCity.name}
+                    </Typography>
+                  </Box>
                   <Button
                     variant="contained"
-                    color="primary"
-                    onClick={() => {
-                      if (nearestCity?.slug) onSelectCity(nearestCity.slug);
+                    size="large"
+                    fullWidth
+                    onClick={() =>
+                      nearestCity?.slug && onSelectCity(nearestCity.slug)
+                    }
+                    sx={{
+                      py: 1.5,
+                      borderRadius: 2,
+                      textTransform: "none",
+                      fontSize: "1rem",
                     }}
                   >
                     Välj stad
                   </Button>
-                </Box>
+                </Stack>
               </CardContent>
             </Card>
           )}
 
-          <Button onClick={() => setShowCities(true)}>
-            Visa övriga städer
-          </Button>
-          {showCities && (
-            <List>
-              {sortedCities
-                .filter((city) => nearestCity?.id !== city.id)
-                .map((city) => (
-                  <ListItem disablePadding key={city.id}>
-                    <ListItemButton
-                      selected={selectedCity === city.slug}
-                      onClick={() => {
-                        setSelectedCity(city.slug);
-                        onSelectCity(city.slug);
-                      }}
-                    >
-                      <ListItemAvatar>
-                        <Avatar src={`/${city.icon}`} />
-                      </ListItemAvatar>
-                      <ListItemText primary={city.name} /> {city.latitude}
-                      {city.longitude}
-                    </ListItemButton>
-                  </ListItem>
-                ))}
-            </List>
+          {cities.length > 1 && (
+            <Box textAlign="center" mb={3}>
+              <Button
+                variant="outlined"
+                size="large"
+                onClick={() => setShowCities(!showCities)}
+                sx={{ borderRadius: 2 }}
+              >
+                {showCities ? "Dölj andra städer" : "Visa andra städer"}
+              </Button>
+            </Box>
           )}
-        </div>
+          {showCities && (
+            <Card sx={{ mb: 4, borderRadius: 3, boxShadow: 3 }}>
+              <List sx={{ borderRadius: 3 }}>
+                {sortedCities
+                  .filter((city) => nearestCity?.id !== city.id)
+                  .map((city) => (
+                    <ListItem
+                      key={city.id}
+                      disablePadding
+                      sx={{ borderBottom: "1px solid #eee" }}
+                    >
+                      <ListItemButton
+                        selected={selectedCity === city.slug}
+                        onClick={() => {
+                          setSelectedCity(city.slug);
+                          onSelectCity(city.slug);
+                        }}
+                        sx={{
+                          py: 2,
+                          "&.Mui-selected": {
+                            bgcolor: "primary.light",
+                            "&:hover": { bgcolor: "primary.light" },
+                          },
+                        }}
+                      >
+                        <ListItemAvatar>
+                          <Avatar
+                            src={`/${city.icon}`}
+                            sx={{ width: 56, height: 56 }}
+                          />
+                        </ListItemAvatar>
+                        <ListItemText
+                          sx={{ ml: 4, color: "black" }}
+                          primary={city.name}
+                        />
+                      </ListItemButton>
+                    </ListItem>
+                  ))}
+              </List>
+            </Card>
+          )}
+        </Box>
       ) : (
-        <p>
-          Du måste ge tillgång till platstjänster för att använda webbplatsen.
-        </p>
+        <Box textAlign="center" py={8} px={4}>
+          <LocationOnIcon
+            sx={{ fontSize: 80, color: "text.secondary", mb: 2 }}
+          />
+          <Typography variant="h5" gutterBottom fontWeight="bold">
+            Platstjänster krävs
+          </Typography>
+          <Typography variant="body1" color="text.secondary" mb={3}>
+            Du måste ge tillgång till platstjänster för att använda webbplatsen.
+          </Typography>
+          <Button
+            variant="contained"
+            size="large"
+            onClick={() => setOpen(true)}
+          >
+            Tillåt platstjänster
+          </Button>
+        </Box>
       )}
-    </>
+    </Container>
   );
 }
 

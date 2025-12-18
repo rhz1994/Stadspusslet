@@ -34,7 +34,19 @@ export interface Puzzle {
   clueText: string | null;
   correctClueLocation: number;
   puzzleType?: string;
+  locationLat: number;
+  locationLon: number;
+  cityLat?: number;
+  cityLon?: number;
 }
 export interface PuzzleCardProps {
   quest: Quest;
+}
+
+export interface MapClickHandlerProps {
+  activePuzzle: Puzzle;
+  gameComplete: boolean;
+  showPuzzle: boolean;
+  onLocationFound: () => void;
+  onWrongLocation: (distance: number) => void;
 }

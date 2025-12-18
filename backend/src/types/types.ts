@@ -19,12 +19,34 @@ export interface Location {
   cityId: number;
 }
 
-export interface Puzzle {
+export type Puzzle = {
   id: number;
   questId: number;
   locationId: number;
+  puzzleText: string;
+  correctAnswer: string;
   orderNumber: number;
   clueText: string;
+  correctClueLocation: number;
   puzzleType: string;
-  location?: Location;
-}
+  locationLat: number;
+  locationLon: number;
+  cityLat?: number;
+  cityLon?: number;
+};
+
+export type PuzzleDB = {
+  id: number;
+  quest_id: number;
+  location_id: number;
+  puzzle_text: string;
+  clue_text: string;
+  correct_answer: string;
+  correct_clue_location: number;
+  order_number: number;
+  puzzle_type: string;
+  locationLat: number;
+  locationLon: number;
+  cityLat?: number;
+  cityLon?: number;
+};
