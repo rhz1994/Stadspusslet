@@ -172,7 +172,7 @@ describe("Puzzle game user interactions", () => {
     cy.wait("@getPuzzles");
   });
 
-  it("Shows and hides clue toggle button", () => {
+  it("Shows and hides clue button", () => {
     cy.get('[data-testid="clue-container"] button').click();
     cy.get('[data-testid="clue-container"]').should("not.exist");
     cy.contains("Visa ledtråd").click();
