@@ -71,19 +71,23 @@ const puzzlesMock = [
 
 describe("Stadspusslet happy userflow", () => {
   it("User can choose a city, start a quest, and see the first puzzle", () => {
-    cy.intercept("GET", "http://localhost:3000/cities", {
+    cy.intercept("GET", "**/cities", {
       body: citiesMock,
     }).as("getCities");
-    cy.intercept("GET", "http://localhost:3000/cities/slug/gothenburg", {
+
+    cy.intercept("GET", "**/cities/slug/gothenburg", {
       body: cityDetailsMock,
     }).as("getCityDetails");
-    cy.intercept("GET", "http://localhost:3000/quests/city/gothenburg", {
+
+    cy.intercept("GET", "**/quests/city/gothenburg", {
       body: questsMock,
     }).as("getQuests");
-    cy.intercept("GET", "http://localhost:3000/quests/id/1", {
+
+    cy.intercept("GET", "**/quests/id/1", {
       body: questByIdMock,
     }).as("getQuestById");
-    cy.intercept("GET", "http://localhost:3000/puzzles/quest/1", {
+
+    cy.intercept("GET", "**/puzzles/quest/1", {
       body: puzzlesMock,
     }).as("getPuzzles");
 
