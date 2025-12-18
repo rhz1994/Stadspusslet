@@ -69,29 +69,26 @@ const puzzlesMock = [
   },
 ];
 
-describe("Stadspusslet happy userflow", () => {
+describe("Stadspusslet tests", () => {
+  beforeEach(() => {
+    // Intercepts med wildcards, endast en gång per suite
+    cy.intercept("GET", "**/cities*", { body: citiesMock }).as("getCities");
+    cy.intercept("GET", "**/cities/slug/*", { body: cityDetailsMock }).as(
+      "getCityDetails"
+    );
+    cy.intercept("GET", "**/quests/city/*", { body: questsMock }).as(
+      "getQuests"
+    );
+    cy.intercept("GET", "**/quests/id/*", { body: questByIdMock }).as(
+      "getQuestById"
+    );
+    cy.intercept("GET", "**/puzzles/quest/*", { body: puzzlesMock }).as(
+      "getPuzzles"
+    );
+  });
+
   it("User can choose a city, start a quest, and see the first puzzle", () => {
-    cy.intercept("GET", "**/cities", {
-      body: citiesMock,
-    }).as("getCities");
-
-    cy.intercept("GET", "**/cities/slug/gothenburg", {
-      body: cityDetailsMock,
-    }).as("getCityDetails");
-
-    cy.intercept("GET", "**/quests/city/gothenburg", {
-      body: questsMock,
-    }).as("getQuests");
-
-    cy.intercept("GET", "**/quests/id/1", {
-      body: questByIdMock,
-    }).as("getQuestById");
-
-    cy.intercept("GET", "**/puzzles/quest/1", {
-      body: puzzlesMock,
-    }).as("getPuzzles");
-
-    cy.visit("http://127.0.0.1:5173/#/", {
+    cy.visit("/", {
       onBeforeLoad(win) {
         win.localStorage.clear();
         cy.stub(win.navigator.geolocation, "getCurrentPosition").callsFake(
@@ -133,17 +130,9 @@ describe("Stadspusslet happy userflow", () => {
     );
     cy.get('[data-testid="map-container"]').should("be.visible");
   });
-});
-
-describe("Handle cases when city is not available", () => {
-  beforeEach(() => {
-    cy.intercept("GET", "http://localhost:3000/cities", {
-      body: citiesMock,
-    }).as("getCities");
-  });
 
   it("Shows message if user denies geolocation", () => {
-    cy.visit("http://127.0.0.1:5173/#/", {
+    cy.visit("/", {
       onBeforeLoad(win) {
         win.localStorage.clear();
         cy.stub(win.navigator.geolocation, "getCurrentPosition").callsFake(
@@ -161,40 +150,37 @@ describe("Handle cases when city is not available", () => {
       "Du måste ge tillgång till platstjänster för att använda webbplatsen."
     ).should("be.visible");
   });
-});
 
-describe("Puzzle game user interactions", () => {
-  beforeEach(() => {
-    cy.intercept("GET", "http://localhost:3000/puzzles/quest/1", {
-      body: puzzlesMock,
-    }).as("getPuzzles");
-    cy.visit("http://127.0.0.1:5173/#/quest/gothenburg/1");
-    cy.wait("@getPuzzles");
-  });
+  describe("Puzzle game user interactions", () => {
+    beforeEach(() => {
+      cy.visit("/quest/gothenburg/1");
+      cy.wait("@getPuzzles");
+    });
 
-  it("Shows and hides clue button", () => {
-    cy.get('[data-testid="clue-container"] button').click();
-    cy.get('[data-testid="clue-container"]').should("not.exist");
-    cy.contains("Visa ledtråd").click();
-    cy.get('[data-testid="clue-container"]').should("be.visible");
-  });
+    it("Shows and hides clue button", () => {
+      cy.get('[data-testid="clue-container"] button').click();
+      cy.get('[data-testid="clue-container"]').should("not.exist");
+      cy.contains("Visa ledtråd").click();
+      cy.get('[data-testid="clue-container"]').should("be.visible");
+    });
 
-  it("Completes all puzzles and shows solved message", () => {
-    cy.get('[data-testid="clue-container"] button').click();
-    cy.get('[data-testid="map-container"]').click();
-    cy.get('[data-testid="puzzle-container"] input').type(
-      "Victor Von Gegerfelt"
-    );
-    cy.get('[data-testid="solve-puzzle-button"]').click();
+    it("Completes all puzzles and shows solved message", () => {
+      cy.get('[data-testid="clue-container"] button').click();
+      cy.get('[data-testid="map-container"]').click();
+      cy.get('[data-testid="puzzle-container"] input').type(
+        "Victor Von Gegerfelt"
+      );
+      cy.get('[data-testid="solve-puzzle-button"]').click();
 
-    cy.get('[data-testid="clue-container"] button').click();
-    cy.get('[data-testid="map-container"]').click();
-    cy.get('[data-testid="puzzle-container"] input').type("Svar2");
-    cy.get('[data-testid="solve-puzzle-button"]').click();
+      cy.get('[data-testid="clue-container"] button').click();
+      cy.get('[data-testid="map-container"]').click();
+      cy.get('[data-testid="puzzle-container"] input').type("Svar2");
+      cy.get('[data-testid="solve-puzzle-button"]').click();
 
-    cy.get('[data-testid="puzzle-solved-message"]').should(
-      "contain.text",
-      "Grattis!"
-    );
+      cy.get('[data-testid="puzzle-solved-message"]').should(
+        "contain.text",
+        "Grattis!"
+      );
+    });
   });
 });
