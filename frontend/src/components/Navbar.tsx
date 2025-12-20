@@ -1,8 +1,7 @@
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
+
 import { useNavigate } from "react-router-dom";
 
 function Navbar() {
@@ -18,11 +17,6 @@ function Navbar() {
         >
           Stadspusslet
         </Typography>
-        <Box>
-          <Button color="inherit" onClick={() => navigate("/")}>
-            Hem
-          </Button>
-        </Box>
       </Toolbar>
     </AppBar>
   );

@@ -7,7 +7,8 @@ function Footer() {
     <Box
       component="footer"
       sx={{
-        py: 2,
+        pr: 2,
+        pl: 2,
         mt: 10,
         textAlign: "center",
         borderTop: "1px solid",

@@ -15,7 +15,6 @@
     "@mui/icons-material": "^7.3.6",
     "@mui/material": "^7.3.6",
     "leaflet": "^1.9.4",
-    "mermaid": "^11.12.2",
     "mui": "^0.0.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

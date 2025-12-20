@@ -79,7 +79,7 @@ function PuzzleCard({ quest }: PuzzleCardProps) {
       })
       .catch((err) => {
         console.error(err);
-        setError("Could not fetch puzzles");
+        setError("Could not get puzzles");
       })
       .finally(() => setLoading(false));
   }, [quest]);
@@ -186,7 +186,7 @@ function PuzzleCard({ quest }: PuzzleCardProps) {
             <Typography>{activePuzzle.clueText}</Typography>
             <Typography variant="caption" sx={{ mt: 2, display: "block" }}>
               Klicka på rätt plats på kartan!
-            </Typography>{" "}
+            </Typography>
             {!showPuzzle && !gameComplete && (
               <Button
                 variant="contained"
@@ -269,7 +269,7 @@ function PuzzleCard({ quest }: PuzzleCardProps) {
             >
               🎉 Grattis!
             </Typography>
-            <Typography variant="h6" gutterBottom>
+            <Typography variant="h6">
               Du har löst alla pussel i {quest.name}!
             </Typography>
             <Typography color="text.secondary">

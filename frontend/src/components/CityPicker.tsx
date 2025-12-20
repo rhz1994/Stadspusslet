@@ -165,7 +165,7 @@ function CityPicker({ onSelectCity }: CityPickerProps) {
             bättre upplevelse.
           </DialogContentText>
         </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 2 }}>
+        <DialogActions sx={{ pr: 3, pl: 3, pb: 2 }}>
           <Button onClick={handleDenied} color="inherit">
             Neka
           </Button>

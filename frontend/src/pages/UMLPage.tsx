@@ -3,47 +3,36 @@ import RenderMermaid from "react-x-mermaid";
 
 const UMLPage: React.FC = () => {
   const diagramCode = `
-classDiagram
-City --> Quest
-Quest --> Puzzle
-Puzzle --> Location
 
-class City {
-  +id: number
-  +name: string
-  +slug: string
-}
+flowchart TD
+    A[App öppnas] --> B{Platstjänsts tillåten?}
+    B -- Ja --> C[Hitta närmaste stad]
+    B -- Nej --> D[Visa lista över städer]
+    C --> E[CityPicker: välj stad]
+    D --> E
+    E --> F[Visa pussel-lista]
+    F --> G[Starta första pussel]
+    G --> H[Visa karta med första pussel]
+    H --> I{Klick på rätt plats?}
+    I -- Nej --> J[Visa felmeddelande]
+    I -- Ja --> K[Visa pussel]
+    K --> L{Pussel löst?}
+    L -- Nej --> K
+    L -- Ja --> M{Finns fler pussel?}
+    M -- Ja --> H[Visa nästa pussel på kartan]
+    M -- Nej --> N[Grattis! Alla pussel lösta]
 
-class Quest {
-  +id: number
-  +name: string
-  +description: string
-  +cityId: number
-}
-
-class Puzzle {
-  +id: number
-  +puzzleText: string
-  +correctAnswer: string
-  +orderNumber: number
-  +locationId: number
-}
-
-class Location {
-  +id: number
-  +name: string
-  +lat: number
-  +lng: number
-}
   `;
 
   return (
     <div>
       <h1> UML Diagram</h1>
-      <RenderMermaid
-        mermaidCode={diagramCode}
-        mermaidConfig={{ theme: "default" }}
-      />
+      {diagramCode && (
+        <RenderMermaid
+          mermaidCode={diagramCode}
+          mermaidConfig={{ theme: "default" }}
+        />
+      )}
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import CityPicker from "../../src/components/CityPicker";
 
 describe("<CityPicker />", () => {
-  it("User can consent to location tracking and see nearby cities", () => {
+  it("User can consent to location tracking and nearest city is highlighted", () => {
     cy.window().then((win) => {
       cy.stub(win.navigator.geolocation, "getCurrentPosition").callsFake(
         (cb) => {

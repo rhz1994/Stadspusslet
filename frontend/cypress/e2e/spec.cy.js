@@ -71,7 +71,6 @@ const puzzlesMock = [
 
 describe("Stadspusslet tests", () => {
   beforeEach(() => {
-    // Intercepts med wildcards, endast en gång per suite
     cy.intercept("GET", "**/cities*", { body: citiesMock }).as("getCities");
     cy.intercept("GET", "**/cities/slug/*", { body: cityDetailsMock }).as(
       "getCityDetails"
