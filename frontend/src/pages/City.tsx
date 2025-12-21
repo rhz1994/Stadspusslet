@@ -45,7 +45,7 @@ function City() {
   }
 
   return (
-    <Container maxWidth="sm" sx={{ py: 6 }}>
+    <Container maxWidth="sm" sx={{ pr: 6, pl: 6 }}>
       <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
         {cityIcon && (
           <CardMedia

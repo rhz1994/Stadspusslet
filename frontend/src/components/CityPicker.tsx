@@ -153,7 +153,7 @@ function CityPicker({ onSelectCity }: CityPickerProps) {
     : cities;
 
   return (
-    <Container maxWidth="md" sx={{ py: 4 }} data-testid="city-picker">
+    <Container maxWidth="md" sx={{ pr: 4, pl: 4 }} data-testid="city-picker">
       <Dialog open={open} onClose={handleDenied} data-testid="location-dialog">
         <DialogTitle sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <LocationOnIcon color="primary" />
@@ -199,7 +199,7 @@ function CityPicker({ onSelectCity }: CityPickerProps) {
           </Stack>
 
           {loading && (
-            <Box textAlign="center" py={6}>
+            <Box textAlign="center" pr={6} pl={6}>
               <CircularProgress size={60} />
               <Typography variant="h6" mt={2} color="text.secondary">
                 Hämtar din plats...
