@@ -309,7 +309,7 @@ function CityPicker({ onSelectCity }: CityPickerProps) {
           )}
         </Box>
       ) : (
-        <Box textAlign="center" py={8} px={4}>
+        <Box textAlign="center" pr={8} pl={8} px={4}>
           <LocationOnIcon
             sx={{ fontSize: 80, color: "text.secondary", mb: 2 }}
           />

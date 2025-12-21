@@ -28,7 +28,7 @@ function Quests() {
 
   if (loading) {
     return (
-      <Box textAlign="center" py={10}>
+      <Box textAlign="center" pr={10} pl={10}>
         <CircularProgress size={60} />
         <Typography variant="h6" mt={2} color="text.secondary">
           Hämtar quests...
@@ -38,7 +38,7 @@ function Quests() {
   }
 
   return (
-    <Container data-testid="quest-list" maxWidth="sm" sx={{ py: 6 }}>
+    <Container data-testid="quest-list" maxWidth="sm" sx={{ pr: 6, pl: 6 }}>
       <Typography variant="h4" fontWeight="bold" mb={4} textAlign="center">
         Pussel i {citySlug}
       </Typography>
@@ -61,7 +61,8 @@ function Quests() {
                     fullWidth
                     onClick={() => navigate(`/quest/${citySlug}/${quest.id}`)}
                     sx={{
-                      py: 1.5,
+                      pr: 1.5,
+                      pl: 1.5,
                       borderRadius: 2,
                       textTransform: "none",
                       fontSize: "1rem",

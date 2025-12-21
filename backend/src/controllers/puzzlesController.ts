@@ -49,7 +49,7 @@ export const getPuzzlesByQuest = async (req: Request, res: Response) => {
         .json({ message: "No puzzles found for this quest" });
     }
 
-    const formatted = (puzzles as PuzzleDB[]).map((p) => ({
+    const camelFormatted = (puzzles as PuzzleDB[]).map((p) => ({
       id: p.id,
       questId: p.quest_id,
       locationId: p.location_id,
@@ -65,7 +65,7 @@ export const getPuzzlesByQuest = async (req: Request, res: Response) => {
       cityLon: p.cityLon,
     }));
 
-    res.json(formatted);
+    res.json(camelFormatted);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Could not get puzzles for quest" });

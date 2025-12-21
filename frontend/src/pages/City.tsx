@@ -35,7 +35,7 @@ function City() {
 
   if (loading) {
     return (
-      <Box textAlign="center" py={10}>
+      <Box textAlign="center" pr={10} pl={10}>
         <CircularProgress size={60} />
         <Typography variant="h6" mt={2} color="text.secondary">
           Hämtar stad...
@@ -66,10 +66,10 @@ function City() {
               size="large"
               onClick={() => navigate(`/city/${citySlug}/quests`)}
               sx={{
-                py: 1.5,
+                pr: 1.5,
+                pl: 1.5,
                 borderRadius: 2,
                 textTransform: "none",
-                fontSize: "1rem",
                 width: "100%",
               }}
             >
